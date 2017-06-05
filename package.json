@@ -1,0 +1,15 @@
+{
+  "name": "node-nortv",
+  "version": "1.0.0",
+  "description": "NorTV IRC Bot in nodejs",
+  "main": "nortv.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "NChief",
+  "license": "ISC",
+  "dependencies": {
+    "irc": "^0.5.2",
+    "nconf": "^0.8.4"
+  }
+}
