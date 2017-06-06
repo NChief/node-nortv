@@ -3,9 +3,17 @@
  */
 
 module.exports = function(client, config, plugins) {
-  client.addListener('registered' function(message) {
+  var onMessage = function(message) {
     client.say(config.nick, 'IDENTIFY ' + config.password);
-  });
+  }
+  module.listeners = [
+    {
+      type: 'registered',
+      function: onMessage
+    }
+  ];
+  
+  client.addListener('registered', onMessage);
   
   return module;
 }
