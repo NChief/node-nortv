@@ -30,8 +30,10 @@ class Plugins extends EventEmitter {
   add(plugin_arr) {
     var pluginClass = this;
     plugin_arr.forEach(function(plugin) {
+      //console.log(plugin);
       if(!plugin.disabled) {
         var module = require(plugin.file)(pluginClass.client, plugin.config, pluginClass);
+        //console.log(module);
         module.info = plugin;
         //console.log(module);
         pluginClass.plugins.push(module);

@@ -10,6 +10,8 @@ var serverinfo = nconf.get('serverinfo');
 
 var client = new irc.Client(serverinfo.server, serverinfo.nick, serverinfo.options);
 
+client.nconf = nconf;
+
 // Dont't fail on error, output it.
 client.addListener('error', function(message) {
     console.log('error: ', message);
