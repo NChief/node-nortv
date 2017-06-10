@@ -9,6 +9,7 @@
   "author": "NChief",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.1.2",
     "irc": "^0.5.2",
     "nconf": "^0.8.4",
     "twitch-api": "^0.4.6",

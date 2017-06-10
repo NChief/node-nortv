@@ -238,6 +238,26 @@ module.exports = function(client, config, plugins) {
       function: onMessage
     }
   ];
+  
+  module.commands = {
+    'twitch': {
+      usage: '!twitch [channel]',
+      description: 'List followed channels that are streaming or spesific channel'
+    },
+    'follow': {
+      usage: '!follow <channel>',
+      description: 'follow a channel'
+    },
+    'unfollow': {
+      usage: '!unfollow <channel>',
+      description: 'unfollow a channel'
+    },
+    'following': {
+      usage: '!following',
+      description: 'List all channels followed.'
+    }
+  }
+  
   client.addListener('pm', onPm);
   client.addListener('message#', onMessage);
   

@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+var colors = require('colors');
 //require('node-hot')
 
 class Plugins extends EventEmitter {
@@ -19,6 +20,33 @@ class Plugins extends EventEmitter {
         }
         //pluginClass.reload(pluginClass.plugins[0]);
         //pluginClass.reload(pluginClass.plugins.splice(0,1)[0]);
+      } else if(res[0] == '!commands') {
+        var commands = ['!help','!reload'];
+        pluginClass.plugins.forEach(function(plugin) {
+          if(plugin.commands != null) {
+            for (var key in plugin.commands) {
+              commands.push('!'+key);
+            }
+          }
+        });
+        client.say(to, 'Commands: ' + commands.join(', '));
+      } else if(res[0] == '!help' && res[1]) {
+        var found = false;
+        pluginClass.plugins.forEach(function(plugin) {
+          if(plugin.commands != null) {
+            for (var key in plugin.commands) {
+              //commands.push('!'+key);
+              if(key == res[1]) {
+                client.say(to, 'Usage: '.bold + plugin.commands[key].usage + ' (' + plugin.commands[key].description + ')');
+                found = true;
+                return;
+              }
+            }
+          }
+        });
+        if(!found) client.say(to, "No help for that command");
+      } else if(res[0] == '!help') {
+        client.say(to, 'Usage:'.bold + ' !help <command>');
       }
     });
     
