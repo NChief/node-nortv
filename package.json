@@ -12,7 +12,9 @@
     "colors": "^1.1.2",
     "irc": "^0.5.2",
     "nconf": "^0.8.4",
+    "spotify-web-api-node": "^2.4.0",
     "twitch-api": "^0.4.6",
-    "twitch-api-v5": "^2.0.2"
+    "twitch-api-v5": "^2.0.2",
+    "xregexp": "^3.2.0"
   }
 }
