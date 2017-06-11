@@ -2,7 +2,7 @@ var SpotifyWebApi = require('spotify-web-api-node');
 var colors = require('colors');
 
 module.exports = function(client, config, plugins) {
-  var re = /(?:spotify:|https?:\/\/(?:open|play)\.spotify\.com\/)(track|album)[\/:]([A-Za-z0-9]+)/;
+  var re = /(?:spotify:|https?:\/\/(?:open|play)\.spotify\.com\/)(track|album)[\/:]([A-Za-z0-9]{22})/;
   var expires = null;
   
   var spotifyApi = new SpotifyWebApi({
@@ -28,10 +28,6 @@ module.exports = function(client, config, plugins) {
       console.log('Something went wrong when retrieving an access token', err);
     });
     
-  
-  
-  
-  
   var onMessage = function(nick, to, text, message) {
     var match = re.exec(text);
     if(match != null) {
@@ -43,6 +39,7 @@ module.exports = function(client, config, plugins) {
       
       var getTrackCallback = function(data) {
         if(data.statusCode == 200) {
+          console.log(data.body);
           var artist = data.body.artists[0].name,
             tittel = data.body.name;
             album = data.body.album.name;
@@ -67,13 +64,14 @@ module.exports = function(client, config, plugins) {
       now = new Date();
       
       if(type == 'track') {
-        if(now > expires) {
+        if(now > expires && false) {
           console.log("EXPIRED");
           spotifyApi.clientCredentialsGrant()
             .then(updateCredentials, function(err) {
               client.say(to, 'Something went wrong when retrieving an access token: ' + err);
             }).then(function() {
               spotifyApi.getTrack(id).then(getTrackCallback).catch(function(error) {
+                console.log(error);
                 client.say(to, error);
               });
             });
@@ -88,7 +86,7 @@ module.exports = function(client, config, plugins) {
             .then(updateCredentials, function(err) {
               client.say(to, 'Something went wrong when retrieving an access token: ' + err);
             }).then(function() {
-              spotifyApi.getTrack(id).then(getAlbumCallback).catch(function(error) {
+              spotifyApi.getAlbum(id).then(getAlbumCallback).catch(function(error) {
                 client.say(to, error);
               });
             });
