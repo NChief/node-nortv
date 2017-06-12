@@ -3,3 +3,5 @@ test*
 config.json
 files/
 !files/.hold
+*.txt
+yr_convert.js
