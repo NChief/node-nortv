@@ -5,3 +5,4 @@ files/
 !files/.hold
 *.txt
 yr_convert.js
+package-lock.json
