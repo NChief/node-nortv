@@ -8,6 +8,8 @@ module.exports = function(client, config, plugins) {
   var files = client.nconf.get('files');
   var places = {};
   
+  var saved = {};
+  
   if (fs.existsSync(files + 'places.json')) {
     fs.readFile(files + 'places.json', 'utf8', function(err, data) {
       if(err) {
@@ -18,11 +20,29 @@ module.exports = function(client, config, plugins) {
     });
   }
   
+  if (fs.existsSync(files + 'yr-saved.json')) {
+    fs.readFile(files + 'yr-saved.json', 'utf8', function(err, data) {
+      if(err) {
+        console.log('unable to read yr-saved.json: ' + err);
+        return;
+      }
+      saved = JSON.parse(data);
+    });
+  }
+  
   var onMessage = function(nick, to, text, message) {
     res = text.split(' ');
-    if(res[0] == '!v' && res[1]) {
-      var place = res[1].toLowerCase();
+    if(res[0] == '!v') {
+      //console.log(saved);
+      var place;
+      if(res[1])
+        place = res[1].toLowerCase();
+      else if (saved[nick])
+        place = saved[nick];
+      else
+        return;
       if(places[place] != null) {
+        saved[nick] = place;
         var url = places[place];
         request(url, function(error, response, body) {
           if(error) {
@@ -49,6 +69,15 @@ module.exports = function(client, config, plugins) {
             });
           }
         });
+        
+        fs.writeFile(files + 'yr-saved.json', JSON.stringify(saved), 'utf8', function(err) {
+          if(err) {
+            console.log('Unable to save yr-saved.json: ' + err);
+            return;
+          }
+          //console.log("yr-saved.json saved.");
+        });
+        
       } else {
         client.say(to, "Plass ikke funnet");
       }
