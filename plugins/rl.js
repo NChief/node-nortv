@@ -1,6 +1,7 @@
 var request = require('request');
 //require('request-debug')(request);
 var colors = require('colors');
+var fs = require('fs');
 
 module.exports = function(client, config, plugins) {
   
@@ -20,11 +21,36 @@ module.exports = function(client, config, plugins) {
     'Ranked Standard 3v3': '3v3'
   };
   
+  var v2r = {
+    0: 'Unranked',
+    1: 'Bronze',
+    2: 'Silver',
+    3: 'Gold',
+    4: 'Platinum',
+    5: 'Diamond',
+    6: 'Champion',
+    7: 'Grand Champion'
+  }
+  
+  var saved = {};
+  var files = client.nconf.get('files');
+  
+  if (fs.existsSync(files + 'rl-saved.json')) {
+    fs.readFile(files + 'rl-saved.json', 'utf8', function(err, data) {
+      if(err) {
+        console.log('unable to read rl-saved.json: ' + err);
+        return;
+      }
+      saved = JSON.parse(data);
+    });
+  }
+  
   var onMessage = function(nick, to, text, message) {
     res = text.split(' ');
     if(res[0] == '!rl') {
       var sNick = nick, platform = 'steam';
       if(res[1] != null) sNick = res[1];
+      else if(saved[nick] != null) sNick = saved[nick];
       if(res[2] != null) platform = encodeURIComponent(res[2]);
       
       var options = {
@@ -50,6 +76,7 @@ module.exports = function(client, config, plugins) {
             //console.log(data);
             var usr = data.platformUserHandle;
             var statA = [];
+            var srl = {};
             data.stats.forEach(function(stat) {
               if(stat.category == 'Ranked Season' && stat.label != 'Un-Ranked') {
                 var label = stat.label.substr(stat.label.indexOf(" ") + 1);
@@ -57,13 +84,28 @@ module.exports = function(client, config, plugins) {
                 var div = subLabelA[0].slice(1, -1);
                 var rank = subLabelA.splice(1, subLabelA.length-1).join(' ');
                 statA.push((label + ': ').green + rank + ' div ' + div);
+              } else if(stat.label == 'Reward Level') {
+                srl.rank = v2r[stat.value];
+              } else if(stat.label = 'Reward Wins') {
+                srl.wins = stat.value;
               }
             });
-            client.say(to, usr.bold + ' => ' + statA.join(', '));
+            client.say(to, usr.bold + ' => ' + statA.join(', ') + ' | ' + 'SRL: '.bold + srl.rank + ' (Wins: ' + srl.wins + ') - ' 
+              + 'https://rocketleague.tracker.network/profile/' + data.platformName + '/' + data.platformUserHandle);
           } else {
             client.say(to, 'Fant ikke bruker');
           }
         }
+      });
+    } else if (res[0] == '!rlsave' && res[1]) {
+      saved[nick] = res[1];
+      fs.writeFile(files + 'rl-saved.json', JSON.stringify(saved), 'utf8', function(err) {
+        if(err) {
+          console.log('Unable to save rl-saved.json: ' + err);
+          return;
+        }
+        //console.log("rl-saved.json saved.");
+        client.say(to, 'Done!');
       });
     }
   };
