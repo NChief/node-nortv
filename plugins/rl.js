@@ -91,7 +91,7 @@ module.exports = function(client, config, plugins) {
               }
             });
             client.say(to, usr.bold + ' => ' + statA.join(', ') + ' | ' + 'SRL: '.bold + srl.rank + ' (Wins: ' + srl.wins + ') - ' 
-              + 'https://rocketleague.tracker.network/profile/' + data.platformName + '/' + data.platformUserHandle);
+              + 'https://rocketleague.tracker.network/profile/' + data.platformName + '/' + data.platformUserId);
           } else {
             client.say(to, 'Fant ikke bruker');
           }
